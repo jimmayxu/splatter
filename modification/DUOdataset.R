@@ -1,6 +1,8 @@
 
 source("importpackage.R")
 summary <- readRDS("../../DuoClustering2018dataset/clustering_summary.rds")
+
+
 Koh <-readRDS("../../DuoClustering2018dataset/sce_filteredExpr10/sce_filteredExpr10_Koh.rds")
 KohTCC <- readRDS("../../DuoClustering2018dataset/sce_filteredExpr10/sce_filteredExpr10_KohTCC.rds")
 Kumar <- readRDS("../../DuoClustering2018dataset/sce_filteredExpr10/sce_filteredExpr10_Kumar.rds")
