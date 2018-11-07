@@ -1,11 +1,12 @@
 source("SIMLRdataset.r")
 #source("DUOdataset.R")
 source("importpackage.R")
+dyn.load("../src/projsplx_R.so")
 ##############
 
 
 plotPCA(sim.groups, colour_by = "Group")
-X_counts <- counts(sim.groups)
+X_counts <- assays(sim.groups)$counts
 if (any(which(rowSums(X_counts)==0))){
   X_counts <- X_counts[-which(rowSums(X_counts)==0),]
 }
@@ -13,7 +14,7 @@ n_gene <- nrow(X_counts)
 n_cell <- ncol(X_counts)
 Theta0 <- prior.zinb(X_counts)$Theta
 X <- log(X_counts+1,10)
-cores.ratio <- 6
+cores.ratio <- 2
 
 ### MLE scattering
 

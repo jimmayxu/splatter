@@ -4,7 +4,7 @@ setwd("../modification/")
 
 setwd("../../SIMLR(John)/FZINB/")
 source("packageimport.r")
-setwd("../../splatter_simulation/modification/")
+setwd("../../splatter/modification/")
 library(checkmate)
 library(MCMCpack)
 library(scater)
