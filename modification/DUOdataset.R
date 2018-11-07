@@ -29,11 +29,11 @@ X_counts <- assays(SimKumar4easy)$counts
 sum(X_counts==0)/prod(dim(X_counts))
 params <- splatEstimate(X_counts)
 ### Check for the library size
-hist(colSums(X_counts))
-sqrt(var(colSums(X_counts)))/mean(colSums(X_counts))
+#hist(colSums(X_counts))
+#sqrt(var(colSums(X_counts)))/mean(colSums(X_counts))
 
 
-n_clusters<- true_lab[[5]]
+n_clusters<- 4
 
 probs <- as.vector(rdirichlet(1,rep(7,n_clusters)))
 params <- setParams(params, group.prob = probs, de.prob = 0.2, dropout.type = "experiment")
@@ -43,3 +43,30 @@ sim.groups <- normalise(sim.groups,return_log = FALSE)
 assays(sim.groups)$logcounts <- log(assays(sim.groups)$normcounts+1,10)
 
 plotPCA(sim.groups, colour_by = "Group")
+
+
+sim.groupsKumarTCC <- sim.groups
+sim.groupsZhengmix8eq <- sim.groups
+sim.groupsSimKumar4easy <- sim.groups
+
+SCE.data <- list("KumarTCC" = sim.groupsKumarTCC,
+                 "Zhengmix8eq" = sim.groupsZhengmix8eq,
+                 "SimKumar4easy" = sim.groupsSimKumar4easy)
+
+sim.data <- list("KumarTCC" = assays(SCE.data$KumarTCC),
+                 "Zhengmix8eq" = assays(SCE.data$Zhengmix8eq),
+                 "SimKumar4easy" = assays(SCE.data$SimKumar4easy))
+sim.lab <- list("KumarTCC" = as.numeric(factor(colData(SCE.data$KumarTCC)$Group)),
+                 "Zhengmix8eq" = as.numeric(factor(colData(SCE.data$Zhengmix8eq)$Group)),
+                 "SimKumar4easy" = as.numeric(factor(colData(SCE.data$SimKumar4easy)$Group)))
+
+
+dropout.mid <- getParam(metadata(SCE.data$Zhengmix8eq)$Params,"dropout.mid")
+dropout.shape <- getParam(metadata(SCE.data$Zhengmix8eq)$Params, "dropout.shape")
+
+params <- metadata(SCE.data$SimKumar4easy)$Params
+params <- setParams(params, update = list(dropout.mid = dropout.mid, dropout.shape = dropout.shape))
+sim.groups <- splatSimulate(params, method = "groups", nGenes = 5000, batchCells = 200)
+sim.groups <- normalise(sim.groups,return_log = FALSE)
+assays(sim.groups)$logcounts <- log(assays(sim.groups)$normcounts+1,10)
+SCE.data$SimKumar4easy <- sim.groups

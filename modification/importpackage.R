@@ -1,9 +1,10 @@
 setwd("../R")
 sapply(list.files(), source)
-setwd("../modification/")
 
-setwd("../../SIMLR(John)/FZINB/")
+setwd("../../FZINB_kernel/SIMLR/")
 source("packageimport.r")
+
+#dyn.load("../src/projsplx_R.so")
 setwd("../../splatter/modification/")
 library(checkmate)
 library(MCMCpack)

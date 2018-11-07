@@ -4,16 +4,15 @@ source("importpackage.R")
 dyn.load("../src/projsplx_R.so")
 ##############
 
+i=2
+plotPCA(SCE.data$KumarTCC, colour_by = "Group")
+X_counts <- assays(SCE.data$SimKumar4easy)$normcounts
 
-plotPCA(sim.groups, colour_by = "Group")
-X_counts <- assays(sim.groups)$counts
 if (any(which(rowSums(X_counts)==0))){
   X_counts <- X_counts[-which(rowSums(X_counts)==0),]
 }
-n_gene <- nrow(X_counts)
-n_cell <- ncol(X_counts)
-Theta0 <- prior.zinb(X_counts)$Theta
 X <- log(X_counts+1,10)
+Theta0 <- prior.zinb(X_counts)$Theta
 cores.ratio <- 2
 
 ### MLE scattering
@@ -30,7 +29,7 @@ p1 <- ggplot(MLE,aes(x=mu,y=theta,colour = pi)) +
   scale_colour_gradient(low = "blue",high = "yellow", space = "Lab" ,guide = "colourbar",limits=c(0,1)) +
   xlim(c(0,xmax)) +
   ylim(c(0,ymax)) +
-  labs(title = "params estimated by Buettner",
+  labs(title = "params estimated by SimKumar4easy",
        x = expression(hat(mu)),
        y = expression(hat(theta)),
        caption = paste(signif(nn/size*100,3),"% shown")) +
@@ -60,11 +59,10 @@ plot(p2)
 p <- list()
 nmi <- list()
 
-true_lab <- as.numeric(factor(colData(sim.groups)$Group))
 result <- SIMLR(X = X, c = getParams(params, "nGroups")$nGroups, cores.ratio = cores.ratio)
-nmi[[1]] <- compare(true_lab,result$y$cluster, method = "nmi")
+nmi[[1]] <- compare(sim.lab[[i]],result$y$cluster, method = "nmi")
 
-setwd("../../SIMLR(John)/FZINB/")
+setwd("../../FZINB_kernel/SIMLR/")
 cl <- start_cluster(cores.ratio)
 FK <-FZINB.matrix(X_counts, cl = cl, calc.dists = FALSE, LogCOUNTS = FALSE)
 stopCluster(cl)
